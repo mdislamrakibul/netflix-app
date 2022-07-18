@@ -2,7 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
 const dotenv = require("dotenv").config();
-
+var log4js = require('log4js');
+var log = log4js.getLogger("index");
 mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true })
     .then((result) =>
     {
@@ -13,6 +14,7 @@ mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true })
     });
 
 app.use(express.json());
+app.use(log4js.connectLogger(log4js.getLogger("http"), { level: 'auto' }));
 
 const authRoute = require("./src/routes/auth");
 const userRoute = require("./src/routes/users");

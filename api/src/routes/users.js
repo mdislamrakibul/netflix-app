@@ -3,6 +3,12 @@ const User = require("../models/User");
 const CryptoJS = require("crypto-js");
 const verify = require("../../verifyToken");
 
+var log4js = require("log4js");
+var logger = log4js.getLogger("auth api");
+log4js.configure({
+    appenders: { console: { type: "console" } },
+    categories: { default: { appenders: ["console"], level: "info" } },
+});
 
 //UPDATE
 router.put("/:id", verify, async (req, res) =>
@@ -68,7 +74,6 @@ router.get("/find/:id", async (req, res) =>
 router.get("/", verify, async (req, res) =>
 {
     const query = req.query.new;
-    console.log("🚀 ~ file: users.js ~ line 70 ~ query", query)
     if (req.user.isAdmin) {
         try {
             const users = query

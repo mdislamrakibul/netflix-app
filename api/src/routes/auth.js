@@ -3,6 +3,13 @@ const User = require('../models/User');
 const CryptoJS = require("crypto-js");
 const jwt = require("jsonwebtoken");
 
+var log4js = require("log4js");
+var logger = log4js.getLogger("auth api");
+log4js.configure({
+    appenders: { console: { type: "console" } },
+    categories: { default: { appenders: ["console"], level: "info" } },
+});
+
 /** REGISTER */
 router.post('/register', async (req, res) =>
 {
@@ -14,8 +21,10 @@ router.post('/register', async (req, res) =>
     });
     try {
         const user = await newUser.save();
+        logger.info('success');
         res.status(201).json({ 'status': true, 'code': 200, 'user': user });
     } catch (err) {
+        logger.error("error!!!");
         res.status(500).json(err);
     }
 })
@@ -48,9 +57,10 @@ router.post("/login", async (req, res) =>
         );
 
         const { password, cryptPassword, __v, ...info } = user._doc;
-
+        logger.info('success');
         res.status(200).json({ ...info, accessToken });
     } catch (err) {
+        logger.error("error!!!");
         res.status(500).json(err);
     }
 });
