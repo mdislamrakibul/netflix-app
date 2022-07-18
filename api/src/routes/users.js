@@ -30,9 +30,21 @@ router.put("/:id", verify, async (req, res) =>
                 },
                 { new: true }
             );
-            res.status(200).json(updatedUser);
+            logger.info('update password - success ...');
+            const { password, cryptPassword, __v, ...info } = updatedUser._doc;
+
+            res.status(200).json({
+                message: "User updated successfully",
+                data: { ...info },
+                status: true
+            });
         } catch (err) {
-            res.status(500).json(err);
+            logger.error('update password - error !!!');
+            res.status(500).json({
+                message: "User not updated successfully",
+                data: err,
+                status: false
+            });
         }
     } else {
         res.status(403).json("You can update only your account!");
@@ -45,10 +57,28 @@ router.delete("/:id", verify, async (req, res) =>
 {
     if (req.user.id === req.params.id || req.user.isAdmin) {
         try {
-            await User.findByIdAndDelete(req.params.id);
-            res.status(200).json("User has been deleted...");
+            // await User.findByIdAndDelete(req.params.id);
+            const updatedUser = await User.findByIdAndUpdate(
+                req.params.id,
+                {
+                    $set: req.body,
+                },
+                { new: true }
+            );
+            logger.info('delete user - success ...');
+            const { password, cryptPassword, __v, ...info } = users._doc;
+            res.status(200).json({
+                message: "User has been deleted...",
+                data: { ...info },
+                status: true
+            });
         } catch (err) {
-            res.status(500).json(err);
+            logger.error('delete user - error !!!');
+            res.status(500).json({
+                message: "User has not been deleted...",
+                data: err,
+                status: false
+            });
         }
     } else {
         res.status(403).json("You can delete only your account!");
@@ -61,10 +91,20 @@ router.get("/find/:id", async (req, res) =>
 {
     try {
         const user = await User.findById(req.params.id);
-        const { password, ...info } = user._doc;
-        res.status(200).json(info);
+        const { password, cryptPassword, __v, ...info } = user._doc;
+        logger.info('get user by id - success');
+        res.status(200).json({
+            message: "User found successfully",
+            data: { ...info },
+            status: true
+        });
     } catch (err) {
-        res.status(500).json(err);
+        logger.error('get user by id - error');
+        res.status(500).json({
+            message: "User not found",
+            data: err,
+            status: false
+        });
     }
 });
 
@@ -79,9 +119,20 @@ router.get("/", verify, async (req, res) =>
             const users = query
                 ? await User.find().sort({ _id: -1 }).limit(5)
                 : await User.find();
-            res.status(200).json(users);
+            logger.info('fetch users - success ...');
+            // const { password, cryptPassword, __v, ...info } = users._doc;
+            res.status(200).json({
+                message: "Users fetched successfully",
+                data: users,
+                status: true
+            });
         } catch (err) {
-            res.status(500).json(err);
+            logger.info('fetch users - error !!!');
+            res.status(500).json({
+                message: "Users not fetched successfully",
+                data: err,
+                status: false
+            });
         }
     } else {
         res.status(403).json("You are not allowed to see all users!");
@@ -110,9 +161,17 @@ router.get("/stats", async (req, res) =>
                 },
             },
         ]);
-        res.status(200).json(data)
+        res.status(200).json({
+            status: true,
+            data: data,
+            'message': 'User stats fetched successfully'
+        })
     } catch (err) {
-        res.status(500).json(err);
+        res.status(500).json({
+            status: false,
+            data: err,
+            'message': 'User stats not fetched successfully'
+        });
     }
 });
 

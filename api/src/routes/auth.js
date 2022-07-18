@@ -58,10 +58,18 @@ router.post("/login", async (req, res) =>
 
         const { password, cryptPassword, __v, ...info } = user._doc;
         logger.info('success');
-        res.status(200).json({ ...info, accessToken });
+        res.status(200).json({
+            "status": true,
+            "message": "Login Successful!!",
+            "data": { ...info, accessToken }
+        });
     } catch (err) {
         logger.error("error!!!");
-        res.status(500).json(err);
+        res.status(500).json({
+            "status": false,
+            "message": "Login not Successful!!",
+            "data": err
+        });
     }
 });
 module.exports = router;

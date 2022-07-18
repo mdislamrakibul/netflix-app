@@ -7,6 +7,7 @@ const UserSchema = new mongoose.Schema(
         password: { type: String, required: true },
         cryptPassword: { type: String, required: true },
         profilePic: { type: String, default: "" },
+        isDelete: { type: Boolean, default: false },
         isAdmin: { type: Boolean, default: false },
     },
     { timestamps: true }
