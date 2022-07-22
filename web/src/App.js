@@ -13,7 +13,7 @@ import Watch from './pages/watch/Watch';
 
 function App()
 {
-  const isUser = false
+  const isUser = true
   return (
     <div>
       <BrowserRouter>
